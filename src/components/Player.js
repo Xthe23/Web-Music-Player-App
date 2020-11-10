@@ -6,7 +6,6 @@ import {
   faAngleRight,
   faPause,
 } from "@fortawesome/free-solid-svg-icons";
-import { playAudio } from "../util";
 
 const Player = ({
   currSong,
@@ -52,26 +51,38 @@ const Player = ({
     );
   };
 
-  const skipTrackHandler = (direction) => {
+  const skipTrackHandler = async (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currSong.id);
     if (direction === "skip-forward") {
       // using modulus currSong is able to go back to the the beginning once the last song is reached
-      setCurrSong(songs[(currentIndex + 1) % songs.length]);
+      await setCurrSong(songs[(currentIndex + 1) % songs.length]);
     } else if (direction === "skip-back") {
       // If the currentIndex goes to -1 it should reassign itself to the last song in the list
       if ((currentIndex - 1) % songs.length === -1) {
-        setCurrSong(songs[songs.length - 1]);
-        playAudio(isPlaying, audioRef);
+        await setCurrSong(songs[songs.length - 1]);
+        if (isPlaying) {
+          audioRef.current.play();
+        }
         return;
       }
-      setCurrSong(songs[(currentIndex - 1) % songs.length]);
+      await setCurrSong(songs[(currentIndex - 1) % songs.length]);
     }
-    playAudio(isPlaying, audioRef);
+    if (isPlaying) {
+      audioRef.current.play();
+    }
   };
 
   //Add the styles
   const trackAnim = {
     transform: `translateX(${songInfo.animationPercentage}%)`,
+  };
+
+  const songEndHandler = async () => {
+    let currentIndex = songs.findIndex((song) => song.id === currSong.id);
+    await setCurrSong(songs[(currentIndex + 1) % songs.length]);
+    if (isPlaying) {
+      audioRef.current.play();
+    }
   };
 
   return (
@@ -120,6 +131,7 @@ const Player = ({
         onTimeUpdate={timeUpdateHandler}
         ref={audioRef}
         src={currSong.audio}
+        onEnded={songEndHandler}
       ></audio>
     </div>
   );
