@@ -15,6 +15,8 @@ const Player = ({
   setSongInfo,
   songInfo,
   timeUpdateHandler,
+  songs,
+  setCurrSong,
 }) => {
   const playSongHandler = () => {
     if (isPlaying) {
@@ -37,7 +39,21 @@ const Player = ({
     );
   };
 
-  const skipTrackHandler = (direction) => {};
+  const skipTrackHandler = (direction) => {
+    let currentIndex = songs.findIndex((song) => song.id === currSong.id);
+    if (direction === "skip-forward") {
+      // using modulus currSong is able to go back to the the beginning once the last song is reached
+      setCurrSong(songs[(currentIndex + 1) % songs.length]);
+    }
+    if (direction === "skip-back") {
+      // If the currentIndex goes to -1 it should reassign itself to the last song in the list
+      if ((currentIndex - 1) % songs.length === -1) {
+        setCurrSong(songs[songs.length - 1]);
+        return;
+      }
+      setCurrSong(songs[(currentIndex - 1) % songs.length]);
+    }
+  };
 
   return (
     <div className="player">

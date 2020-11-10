@@ -34,9 +34,11 @@ function App() {
         setIsPlaying={setIsPlaying}
         isPlaying={isPlaying}
         setSongInfo={setSongInfo}
+        setCurrSong={setCurrSong}
         currSong={currSong}
         songInfo={songInfo}
         timeUpdateHandler={timeUpdateHandler}
+        songs={songs}
       />
       <Library
         audioRef={audioRef}
