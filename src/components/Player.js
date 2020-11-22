@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -19,16 +19,16 @@ const Player = ({
   setCurrSong,
   setSongs,
 }) => {
-  useEffect(() => {
+  const activeLibraryHandler = (nextPrevious) => {
     const newSongs = songs.map((song) => {
-      if (song.id === currSong.id) {
+      if (song.id === nextPrevious.id) {
         return { ...song, active: true };
       } else {
         return { ...song, active: false };
       }
     });
     setSongs(newSongs);
-  }, [currSong]);
+  };
 
   const playSongHandler = () => {
     if (isPlaying) {
@@ -56,6 +56,7 @@ const Player = ({
     if (direction === "skip-forward") {
       // using modulus currSong is able to go back to the the beginning once the last song is reached
       await setCurrSong(songs[(currentIndex + 1) % songs.length]);
+      activeLibraryHandler(songs[(currentIndex + 1) % songs.length]);
     } else if (direction === "skip-back") {
       // If the currentIndex goes to -1 it should reassign itself to the last song in the list
       if ((currentIndex - 1) % songs.length === -1) {
