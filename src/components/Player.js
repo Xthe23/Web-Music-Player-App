@@ -61,12 +61,14 @@ const Player = ({
       // If the currentIndex goes to -1 it should reassign itself to the last song in the list
       if ((currentIndex - 1) % songs.length === -1) {
         await setCurrSong(songs[songs.length - 1]);
+        activeLibraryHandler(songs[songs.length - 1]);
         if (isPlaying) {
           audioRef.current.play();
         }
         return;
       }
       await setCurrSong(songs[(currentIndex - 1) % songs.length]);
+      activeLibraryHandler(songs[(currentIndex - 1) % songs.length]);
     }
     if (isPlaying) {
       audioRef.current.play();
@@ -81,6 +83,8 @@ const Player = ({
   const songEndHandler = async () => {
     let currentIndex = songs.findIndex((song) => song.id === currSong.id);
     await setCurrSong(songs[(currentIndex + 1) % songs.length]);
+    activeLibraryHandler(songs[(currentIndex + 1) % songs.length]);
+
     if (isPlaying) {
       audioRef.current.play();
     }
